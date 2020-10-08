@@ -11,11 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import kotlin.math.ceil
 
-open class RatingBar @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : View(context, attrs, defStyleAttr) {
+open class RatingBar @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : View(context, attrs, defStyleAttr) {
 
     private var mActiveStarDrawable: Drawable
     private var mInactiveStarDrawable: Drawable
@@ -57,14 +53,14 @@ open class RatingBar @JvmOverloads constructor(
             invalidate()
         }
 
+    private var mWidth = 0
 
     var onRatingChangeListener: OnRatingChangeListener? = null
 
     fun setActiveStarDrawable(@DrawableRes res: Int) {
         setActiveStarDrawable(
             ContextCompat.getDrawable(context, res) ?: ContextCompat.getDrawable(
-                context,
-                R.drawable.ic_star
+                context, R.drawable.ic_star
             )!!
         )
     }
@@ -78,8 +74,7 @@ open class RatingBar @JvmOverloads constructor(
     fun setInactiveStarDrawable(@DrawableRes res: Int) {
         setInactiveStarDrawable(
             ContextCompat.getDrawable(context, res) ?: ContextCompat.getDrawable(
-                context,
-                R.drawable.ic_inactive_star
+                context, R.drawable.ic_inactive_star
             )!!
         )
     }
@@ -118,7 +113,8 @@ open class RatingBar @JvmOverloads constructor(
     }
 
     private fun calcRating(x: Float) {
-        rating = ceil(x / (measuredWidth / starsCount)).toInt()
+        val rt = ceil(x / (mWidth / starsCount)).toInt()
+        rating = if(rt > starsCount) starsCount else rt
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -139,12 +135,28 @@ open class RatingBar @JvmOverloads constructor(
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        setMeasuredDimension(mStarSize * starsCount + starsPadding * (starsCount - 1) + paddingLeft + paddingRight, mStarSize + paddingTop + paddingBottom)
+        mWidth =
+            mStarSize * starsCount + starsPadding * (starsCount - 1) + paddingLeft + paddingRight
+        val desiredWidth = suggestedMinimumWidth + mWidth
+        val desiredHeight = suggestedMinimumHeight + paddingTop + paddingBottom
+        setMeasuredDimension(
+            measureDimension(desiredWidth, widthMeasureSpec),
+            measureDimension(desiredHeight + mStarSize, heightMeasureSpec)
+        )
     }
 
 
+    private fun measureDimension(desiredSize: Int, measureSpec: Int): Int {
+        val specMode = MeasureSpec.getMode(measureSpec)
+        val specSize = MeasureSpec.getSize(measureSpec)
+        return if (specMode == MeasureSpec.EXACTLY) specSize
+        else {
+            return if (specMode == MeasureSpec.AT_MOST) desiredSize.coerceAtMost(specSize)
+            else desiredSize
+        }
+    }
+
     override fun onDraw(canvas: Canvas) {
-        super.onDraw(canvas)
         canvas.translate(paddingLeft.toFloat(), paddingTop.toFloat())
         var active = true
         for (i in 0 until starsCount) {
