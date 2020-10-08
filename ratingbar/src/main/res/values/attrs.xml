@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="RatingBar">
+        <attr name="activeStarDrawable" format="reference|integer"/>
+        <attr name="inactiveStarDrawable" format="reference|integer"/>
+        <attr name="activeStarTint" format="reference|color"/>
+        <attr name="inactiveStarTint" format="reference|color"/>
+        <attr name="starsCount" format="integer"/>
+        <attr name="starsPadding" format="dimension"/>
+        <attr name="starSize" format="dimension"/>
+    </declare-styleable>
+</resources>
