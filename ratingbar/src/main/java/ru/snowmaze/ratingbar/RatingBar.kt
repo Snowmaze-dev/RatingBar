@@ -56,6 +56,7 @@ open class RatingBar @JvmOverloads constructor(context: Context, attrs: Attribut
         get() = mStarSize
         set(value) {
             mStarSize = value
+            applyStarSize()
             invalidate()
         }
     var activeStarDrawable: Drawable
