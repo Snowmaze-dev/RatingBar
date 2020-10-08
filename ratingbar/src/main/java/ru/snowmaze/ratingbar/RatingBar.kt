@@ -52,37 +52,37 @@ open class RatingBar @JvmOverloads constructor(context: Context, attrs: Attribut
             mStarsPadding = value
             invalidate()
         }
+    var starSize: Int
+        get() = mStarSize
+        set(value) {
+            mStarSize = value
+            invalidate()
+        }
+    var activeStarDrawable: Drawable
+        get() = mActiveStarDrawable
+        set(value) {
+            mActiveStarDrawable = value
+            value.setTint(mActiveTint)
+            invalidate()
+        }
+    var inactiveStarDrawable: Drawable
+        get() = mInactiveStarDrawable
+        set(value) {
+            mInactiveStarDrawable = value
+            value.setTint(mInactiveTint)
+            invalidate()
+        }
 
     private var mWidth = 0
 
     var onRatingChangeListener: OnRatingChangeListener? = null
 
     fun setActiveStarDrawable(@DrawableRes res: Int) {
-        setActiveStarDrawable(
-            ContextCompat.getDrawable(context, res) ?: ContextCompat.getDrawable(
-                context, R.drawable.ic_star
-            )!!
-        )
-    }
-
-    fun setActiveStarDrawable(drawable: Drawable) {
-        mActiveStarDrawable = drawable
-        mActiveStarDrawable.setTint(mActiveTint)
-        invalidate()
+        activeStarDrawable = ContextCompat.getDrawable(context, res) ?: ContextCompat.getDrawable(context, R.drawable.ic_star)!!
     }
 
     fun setInactiveStarDrawable(@DrawableRes res: Int) {
-        setInactiveStarDrawable(
-            ContextCompat.getDrawable(context, res) ?: ContextCompat.getDrawable(
-                context, R.drawable.ic_inactive_star
-            )!!
-        )
-    }
-
-    fun setInactiveStarDrawable(drawable: Drawable) {
-        mInactiveStarDrawable = drawable
-        mActiveStarDrawable.setTint(mInactiveTint)
-        invalidate()
+        inactiveStarDrawable = ContextCompat.getDrawable(context, res) ?: ContextCompat.getDrawable(context, R.drawable.ic_inactive_star)!!
     }
 
     init {
@@ -99,8 +99,7 @@ open class RatingBar @JvmOverloads constructor(context: Context, attrs: Attribut
             )
             mActiveStarDrawable =
                 getDrawable(R.styleable.RatingBar_activeStarDrawable) ?: ContextCompat.getDrawable(
-                    context,
-                    R.drawable.ic_star
+                    context, R.drawable.ic_star
                 )!!
             mInactiveStarDrawable = getDrawable(R.styleable.RatingBar_inactiveStarDrawable)
                 ?: ContextCompat.getDrawable(context, R.drawable.ic_inactive_star)!!
@@ -114,7 +113,7 @@ open class RatingBar @JvmOverloads constructor(context: Context, attrs: Attribut
 
     private fun calcRating(x: Float) {
         val rt = ceil(x / (mWidth / starsCount)).toInt()
-        rating = if(rt > starsCount) starsCount else rt
+        rating = if (rt > starsCount) starsCount else rt
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -135,8 +134,7 @@ open class RatingBar @JvmOverloads constructor(context: Context, attrs: Attribut
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        mWidth =
-            mStarSize * starsCount + starsPadding * (starsCount - 1) + paddingLeft + paddingRight
+        mWidth = mStarSize * starsCount + starsPadding * (starsCount - 1) + paddingLeft + paddingRight
         val desiredWidth = suggestedMinimumWidth + mWidth
         val desiredHeight = suggestedMinimumHeight + paddingTop + paddingBottom
         setMeasuredDimension(
